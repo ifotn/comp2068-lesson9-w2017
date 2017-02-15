@@ -21,8 +21,94 @@ router.get('/', function(req, res, next) {
 
       // no error so send the books to the index view
       res.render('books/index', {
-         books: books
+         books: books,
+         title: 'Book List'
       });
+   });
+});
+
+// GET /books/add - show blank add form
+router.get('/add', function(req, res, next) {
+   // show the add form
+   res.render('books/add', {
+      title: 'Book Details'
+   });
+});
+
+// POST /books/add - save the new book
+router.post('/add', function(req, res, next) {
+   // use Mongoose to populate a new Book
+   Book.create({
+      title: req.body.title,
+      author: req.body.author,
+      price: req.body.price,
+      year: req.body.year
+   }, function(err, book) {
+          if (err) {
+             console.log(err);
+             res.render('error');
+             return;
+          }
+         res.redirect('/books');
+   });
+});
+
+// GET /books/delete/_id - delete and refresh the index view
+router.get('/delete/:_id', function(req, res, next) {
+   // get the id parameter from the end of the url
+   let _id = req.params._id;
+
+   // use Mongoose to delete
+   Book.remove({ _id: _id }, function(err) {
+      if (err) {
+         console.log(err);
+         res.render('error');
+         return;
+      }
+      res.redirect('/books');
+   });
+});
+
+// GET /books/_id - show edit page and pass it the selected book
+router.get('/:_id', function(req, res, next) {
+   // grab id from the url
+   let _id = req.params._id;
+
+   // use mongoose to find the selected book
+   Book.findById(_id, function(err, book) {
+      if (err) {
+         console.log(err);
+         res.render('error');
+         return;
+      }
+      res.render('books/edit', {
+         book: book,
+         title: 'Book Details'
+      });
+   });
+});
+
+// POST /books/_id - save the updated book
+router.post('/:_id', function(req, res, next) {
+   // grab id from url
+   let _id = req.params._id;
+
+   // populate new book from the form
+   let book = new Book({
+      _id: _id,
+      title: req.body.title,
+      author: req.body.author,
+      price: req.body.price,
+      year: req.body.year
+   });
+
+   Book.update({ _id: _id }, book,  function(err) {
+      if (err) {
+         console.log(err);
+         res.render('error');
+         return;
+      }
+      res.redirect('/books');
    });
 });
 
