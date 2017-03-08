@@ -13,7 +13,17 @@
   <ul class="nav navbar-nav">
     <li><a href="/" class="navbar-brand">COMP2068 - Book Store</a></li>
     <li><a href="/books">Books</a></li>
-    <li><a href="/register">Register</a></li>
-    <li><a href="/login">Login</a></li>
+
+    <% if (!user) { %>
+      <li><a href="/register">Register</a></li>
+      <li><a href="/login">Login</a></li>
   </ul>
+  <% }
+  else { %>
+    <li><a href="/logout">Logout</a></li>
+  </ul>
+  <div class="navbar-text pull-right">
+    <%= user.username %>
+  </div>
+  <% } %>
 </nav>
