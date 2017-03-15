@@ -52,6 +52,41 @@ app.use(passport.session());
 let Account = require('./models/account');
 passport.use(Account.createStrategy());
 
+// facebook auth
+let FacebookStrategy = require('passport-facebook').Strategy;
+
+passport.use(new FacebookStrategy({
+        clientID: globals.facebook.clientID,
+        clientSecret: globals.facebook.clientSecret,
+        callbackURL: globals.facebook.callbackURL
+    }, function(accessToken, refreshToken, profile, cb) {
+        Account.findOne({ username: profile.displayName }, function(err, user) {
+            if (err) {
+                console.log(err);
+            }
+            else {
+                // if the user already exists, continue
+                if (user !== null) {
+                    cb(null, user);
+                }
+                else { // valid fb user but not in mongodb yet.  Add the user.
+                    user = new Account({
+                        username: profile.displayName
+                    });
+                    user.save(function(err) {
+                        if (err) {
+                            console.log(err);
+                        }
+                        else {
+                            cb(null, user);
+                        }
+                    });
+                }
+            }
+        });
+    }
+));
+
 // manage user login status through the db
 passport.serializeUser(Account.serializeUser());
 passport.deserializeUser(Account.deserializeUser());

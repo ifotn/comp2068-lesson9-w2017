@@ -5,5 +5,10 @@
 // array of global variables
 module.exports = {
     // db: 'mongodb://localhost/comp2068-w2017' // local mongodb
-    db: 'mongodb://w2017dba:****@ds145669.mlab.com:45669/comp2068-w2017'  // mlab
+    db: 'mongodb://w2017dba:Willnotcopy17@ds145669.mlab.com:45669/comp2068-w2017',
+    facebook: {
+        clientID: '694312980775759',
+        clientSecret: '64bae3b6566ae136006c44edc3aa47c5',
+        callbackURL: 'http://localhost:3000/facebook/callback'
+    }
 };
