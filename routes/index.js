@@ -69,14 +69,31 @@ router.get('/logout', function(req, res, next) {
 });
 
 /* GET facebook */
-router.get('/facebook', passport.authenticate('facebook'));
+router.get('/facebook', passport.authenticate('facebook', { scope: 'email'}));
 
 /* GET /facebook/callback */
 router.get('/facebook/callback',
-    passport.authenticate('facebook', { failureRedirect: '/login' }),
+    passport.authenticate('facebook', {
+      failureRedirect: '/login',
+        scope: 'email'
+
+    }),
     function(req, res) {
         // Successful authentication, redirect to books.
         res.redirect('/books');
     });
 
+/* GET /google - show google login prompt */
+router.get('/google',
+    passport.authenticate('google', { scope:
+        [ 'https://www.googleapis.com/auth/plus.login',
+            , 'https://www.googleapis.com/auth/plus.profile.emails.read' ] }
+    ));
+
+/* GET /google/callback - check login and redirect */
+router.get( '/google/callback',
+    passport.authenticate( 'google', {
+        successRedirect: '/books',
+        failureRedirect: '/login'
+    }));
 module.exports = router;

@@ -10,5 +10,10 @@ module.exports = {
         clientID: '694312980775759',
         clientSecret: '64bae3b6566ae136006c44edc3aa47c5',
         callbackURL: 'http://localhost:3000/facebook/callback'
+    },
+    google: {
+        clientID: '771555578311-1g9oc612irrk83cakfnvuqq9bm503sda.apps.googleusercontent.com',
+        clientSecret: 'is5y0yBuplOkcK3ljMt7wkk9',
+        callbackURL: 'http://localhost:3000/google/callback'
     }
 };

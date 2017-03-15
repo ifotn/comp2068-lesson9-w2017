@@ -58,8 +58,18 @@ let FacebookStrategy = require('passport-facebook').Strategy;
 passport.use(new FacebookStrategy({
         clientID: globals.facebook.clientID,
         clientSecret: globals.facebook.clientSecret,
-        callbackURL: globals.facebook.callbackURL
-    }, function(accessToken, refreshToken, profile, cb) {
+        callbackURL: globals.facebook.callbackURL,
+        profileFields: [
+            'id', 'displayName', 'emails'
+        ]
+    },
+    function(accessToken, refreshToken, profile, cb) {
+    console.log(profile);
+        Account.findOrCreate({ username: profile.emails[0].value }, function (err, user) {
+            return cb(err, user);
+        });
+    }
+    /*function(accessToken, refreshToken, profile, cb) {
         Account.findOne({ username: profile.displayName }, function(err, user) {
             if (err) {
                 console.log(err);
@@ -83,6 +93,22 @@ passport.use(new FacebookStrategy({
                     });
                 }
             }
+        });
+    } */
+));
+
+// google auth
+var GoogleStrategy = require( 'passport-google-oauth2' ).Strategy;
+
+passport.use(new GoogleStrategy({
+        clientID:     globals.google.clientID,
+        clientSecret: globals.google.clientSecret,
+        callbackURL: globals.google.callbackURL,
+        passReqToCallback   : true
+    },
+    function(request, accessToken, refreshToken, profile, done) {
+        Account.findOrCreate({ username: profile.emails[0].value }, function (err, user) {
+            return done(err, user);
         });
     }
 ));
@@ -112,7 +138,8 @@ app.use(function(err, req, res, next) {
   // render the error page
   res.status(err.status || 500);
   res.render('error', {
-    title: 'COMP2068 - Book Store'
+    title: 'COMP2068 - Book Store',
+      user: req.user
   });
 });
 
